@@ -38,13 +38,17 @@ def price_bar(df):
 
 # cena a pozycja
 def price_position_bar(df):
-    a = df.loc[:,['ValueReal', 'Position']]\
-        .groupby('Position')\
-        .mean()
+    a = df.loc[:,['ValueReal', 'Position']].groupby('Position').mean()
     a.sort_index()
     a.plot.bar()
     plt.show()
+
+
 # cena a wiek
+def price_age_plot(df):
+    a = df.loc[:,['ValueReal', 'AgeIntervals']].groupby("AgeIntervals").mean()
+    a.plot.bar()
+    plt.show()
 
 # kluby najbardziej wartościowe
 
@@ -65,10 +69,17 @@ intervals.append(float("inf"))
 df['ValueReal'] = df.apply(lambda row: value_of_price(row.Value), axis=1)
 df['ValueIntervals'] = pd.cut(df.ValueReal, intervals, include_lowest=True)
 
+#
+intervals = [i for i in range(15,48,3)]
+df['AgeIntervals'] = pd.cut(df.Age, intervals)
+
+
 # print plots
 overall_and_price_comp(df.head(50))
 price_bar(df.head(50))
 price_position_bar(df.head(50))
+price_age_plot(df)
+
 
 # do zdjec
 headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/41.0.2228.0 '
