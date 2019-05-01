@@ -30,8 +30,7 @@ def overall_and_price_comp(df):
 
 # ceny slupkowo
 def price_bar(df):
-    a = df['ValueIntervals'].value_counts()
-    a.sort_index()
+    a = df['ValueIntervals'].value_counts().sort_index()
     a.plot.bar()
     plt.show()
 
@@ -39,24 +38,42 @@ def price_bar(df):
 # cena a pozycja
 def price_position_bar(df):
     a = df.loc[:,['ValueReal', 'Position']].groupby('Position').mean()
-    a.sort_index()
     a.plot.bar()
     plt.show()
 
 
 # cena a wiek
 def price_age_plot(df):
-    a = df.loc[:,['ValueReal', 'AgeIntervals']].groupby("AgeIntervals").mean()
+    a = df.loc[:,['ValueReal', 'AgeIntervals']].groupby('AgeIntervals').mean()
     a.plot.bar()
     plt.show()
 
-# kluby najbardziej wartościowe
 
-# rozkład całego zbioru : wiek, pozycja, kraj, zarobki
+# kluby najbardziej wartościowe
+def most_valued_clubs(df):
+    a = df.loc[:, ['ValueReal', 'Club']].groupby('Club').sum().sort_values('ValueReal').tail(10)
+    a.plot.barh()
+    plt.show()
 
 # kluby z najlepszymy zarobkami
 
-# kraj z najlepszymi piłkarzami
+# rozkład całego zbioru : wiek, pozycja, kraj, zarobki
+def age_distribution(df):
+    a = df['AgeIntervals'].value_counts().sort_index()
+    a.plot.bar()
+    plt.show()
+
+def position_distribution(df):
+    a = df['Position'].value_counts().sort_index()
+    a.plot.bar()
+    plt.show()
+
+def age_distribution(df):
+    a = df['AgeIntervals'].value_counts().sort_index()
+    a.plot.bar()
+    plt.show()
+
+# kraje z najlepszymi piłkarzami
 
 
 with open('data.csv', 'r', encoding='utf-8') as csvFile:
@@ -68,17 +85,21 @@ intervals = [i * 10000000 for i in range(10)]
 intervals.append(float("inf"))
 df['ValueReal'] = df.apply(lambda row: value_of_price(row.Value), axis=1)
 df['ValueIntervals'] = pd.cut(df.ValueReal, intervals, include_lowest=True)
-
+df['WageReal'] = df.apply(lambda row: value_of_price(row.Wage), axis=1)
 #
 intervals = [i for i in range(15,48,3)]
 df['AgeIntervals'] = pd.cut(df.Age, intervals)
 
 
 # print plots
-overall_and_price_comp(df.head(50))
-price_bar(df.head(50))
-price_position_bar(df.head(50))
-price_age_plot(df)
+#overall_and_price_comp(df.head(50))
+#price_bar(df.head(50))
+#price_position_bar(df.head(50))
+#price_age_plot(df)
+#most_valued_clubs(df)
+#age_distribution(df)
+#wage_distribution(df)
+#position_distribution(df)
 
 
 # do zdjec
