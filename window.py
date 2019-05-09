@@ -1,61 +1,97 @@
+import pandas as pd
+
+from PyQt5.QtWidgets import QMainWindow, QApplication, QPushButton
 import sys
-from PyQt5.QtWidgets import QDialog, QApplication, QPushButton, QVBoxLayout
-
+from PyQt5.QtGui import QIcon
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
-from matplotlib.backends.backend_qt5agg import NavigationToolbar2QT as NavigationToolbar
 import matplotlib.pyplot as plt
+from matplotlib.figure import Figure
+from functools import partial
 
-import random
+from plotter import Plotter
+
+buttons_names = ["overall_and_price_comp", "price_bar", "price_position_bar", "price_age_plot", "position_distribution"]
+number_of_plots = len(buttons_names)
 
 
-class Window(QDialog):
-    def __init__(self, parent=None):
-        super(Window, self).__init__(parent)
+class Window(QMainWindow):
+    def __init__(self):
+        super().__init__()
+        title = "Fifa statistics"
+        top = 200
+        left = 200
+        width = 800
+        height = 700
 
-        # a figure instance to plot on
-        self.figure = plt.figure()
+        icon = "icon.png"
 
-        # this is the Canvas Widget that displays the `figure`
-        # it takes the `figure` instance as a parameter to __init__
-        self.canvas = FigureCanvas(self.figure)
+        self.setWindowTitle(title)
+        self.setGeometry(top, left, width, height)
+        self.setWindowIcon(QIcon(icon))
 
-        # this is the Navigation widget
-        # it takes the Canvas widget and a parent
-        self.toolbar = NavigationToolbar(self.canvas, self)
+        self.canvas = None
 
-        # Just some button connected to `plot` method
-        self.button = QPushButton('Plot')
-        self.button.clicked.connect(self.plot)
+        self.my_ui()
+        self.set_buttons()
 
-        # set the layout
-        layout = QVBoxLayout()
-        layout.addWidget(self.toolbar)
-        layout.addWidget(self.canvas)
-        layout.addWidget(self.button)
-        self.setLayout(layout)
+    def my_ui(self):
+        self.canvas = Canvas(self, width=8, height=5)
+        self.canvas.move(0, 0)
 
-    def plot(self):
-        """ plot some random stuff """
-        # random data
-        data = [random.random() for i in range(10)]
+    def set_buttons(self):
+        buttons = [None] * number_of_plots
+        button_width = 150
+        for i in range(number_of_plots):
+            buttons[i] = QPushButton(buttons_names[i], self)
+            buttons[i].resize(button_width, 32)
+            buttons[i].move((button_width + 10)*i+10, 600)
+            buttons[i].clicked.connect(partial(self.on_click, i))
 
-        # instead of ax.hold(False)
+    def on_click(self, number):
+        self.canvas.update_plot(number)
+
+
+class Canvas(FigureCanvas):
+    def __init__(self, parent=None, width=6, height=5, dpi=100):
+        fig = Figure(figsize=(width, height), dpi=dpi)
+        FigureCanvas.__init__(self, fig)
+        self.setParent(parent)
+        self.update_plot(0)
+
+    def update_plot(self, number):
         self.figure.clear()
+        self.figure.tight_layout()
+        fig1, ax = plt.subplots()
+        if number == 0:
+            plotter_arg.overall_and_price_comp()
+        elif number == 1:
+            plotter_arg.price_bar()
+        elif number == 2:
+            plotter_arg.price_position_bar()
+        elif number == 3:
+            plotter_arg.price_age_plot()
+        elif number == 4:
+            plotter_arg.position_distribution()
+        ax.remove()
 
-        # create an axis
-        ax = self.figure.add_subplot(111)
+        fig2 = self.figure
+        ax.figure = fig2
+        fig2.axes.append(ax)
+        fig2.add_axes(ax)
 
-        # plot data
-        ax.plot(data, '*-')
+        dummy = fig2.add_subplot(111)
+        ax.set_position(dummy.get_position())
+        dummy.remove()
+        plt.close(fig1)
+        self.figure.tight_layout()
+        self.draw()
 
-        # refresh canvas
-        self.canvas.draw()
 
+with open('data.csv', 'r', encoding='utf-8') as csvFile:
+    df = pd.read_csv('data.csv')
 
-if __name__ == '__main__':
-    app = QApplication(sys.argv)
-
-    main = Window()
-    main.show()
-
-    sys.exit(app.exec_())
+plotter_arg = Plotter(df)
+app = QApplication(sys.argv)
+window = Window()
+window.show()
+app.exec()

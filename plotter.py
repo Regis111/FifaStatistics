@@ -38,7 +38,6 @@ class Plotter:
     # ceny slupkowo
     def price_bar(self):
         a = self.df['ValueIntervals'].value_counts().sort_index()
-        print('aaaaa')
         return a.plot.bar()
 
     # cena a pozycja
