@@ -10,7 +10,14 @@ from functools import partial
 
 from plotter import Plotter
 
-buttons_names = ["overall_and_price_comp", "price_bar", "price_position_bar", "price_age_plot", "position_distribution","most_valued_clubs"]
+buttons_names = [
+    "overall_and_price_comp",
+    "price_bar",
+    "price_position_bar",
+    "price_age_plot",
+    "position_distribution",
+    "most_valued_clubs"
+]
 number_of_plots = len(buttons_names)
 
 
@@ -23,11 +30,8 @@ class Window(QMainWindow):
         width = 800
         height = 700
 
-        icon = "icon.png"
-
         self.setWindowTitle(title)
         self.setGeometry(top, left, width, height)
-        self.setWindowIcon(QIcon(icon))
 
         self.canvas = None
 
@@ -35,16 +39,17 @@ class Window(QMainWindow):
         self.set_buttons()
 
     def my_ui(self):
-        self.canvas = Canvas(self, width=8, height=5)
+        self.canvas = Canvas(self)
         self.canvas.move(0, 0)
 
     def set_buttons(self):
         buttons = [None] * number_of_plots
         button_width = 150
+        button_distances = 50
         for i in range(number_of_plots):
             buttons[i] = QPushButton(buttons_names[i], self)
             buttons[i].resize(button_width, 32)
-            buttons[i].move((button_width + 10)*i+10, 600)
+            buttons[i].move(1210, 10 + button_distances * i)
             buttons[i].clicked.connect(partial(self.on_click, i))
 
     def on_click(self, number):
@@ -52,7 +57,7 @@ class Window(QMainWindow):
 
 
 class Canvas(FigureCanvas):
-    def __init__(self, parent=None, width=6, height=5, dpi=100):
+    def __init__(self, parent=None, width=12, height=8, dpi=100):
         fig = Figure(figsize=(width, height), dpi=dpi)
         FigureCanvas.__init__(self, fig)
         self.setParent(parent)
@@ -65,15 +70,15 @@ class Canvas(FigureCanvas):
         if number == 0:
             plotter_arg.overall_and_price_comp(axes)
         elif number == 1:
-            plotter_arg.price_bar()
+            plotter_arg.price_bar(axes)
         elif number == 2:
-            plotter_arg.price_position_bar()
+            plotter_arg.price_position_bar(axes)
         elif number == 3:
-            plotter_arg.price_age_plot()
+            plotter_arg.price_age_plot(axes)
         elif number == 4:
-            plotter_arg.position_distribution()
+            plotter_arg.position_distribution(axes)
         elif number == 5:
-            plotter_arg.most_valued_clubs()
+            plotter_arg.most_valued_clubs(axes)
 
         self.figure.add_axes(axes)
         self.figure.tight_layout()

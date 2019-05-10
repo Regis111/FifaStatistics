@@ -1,5 +1,4 @@
 import pandas as pd
-import matplotlib.pyplot as plt
 
 
 def value_of_price(value):
@@ -29,42 +28,32 @@ class Plotter:
         df['AgeIntervals'] = pd.cut(df.Age, intervals)
 
     # dwie funkcje od wykresu ceny od overalla
-
-    def overall_and_price_comp(self,ax):
-        overalls = self.df.loc[:, 'Overall']
-        prices = self.df.loc[:, 'ValueReal']
-        ax.scatter(overalls, prices)
+    def overall_and_price_comp(self, ax):
+        self.df.loc[:, ['Overall', 'ValueReal']].plot(kind='scatter', x='Overall', y='ValueReal', ax=ax)
 
     # ceny slupkowo
-    def price_bar(self):
-        a = self.df['ValueIntervals'].value_counts().sort_index()
-        a.plot.bar()
+    def price_bar(self, ax):
+        self.df['ValueIntervals'].value_counts().sort_index().plot(kind='bar', ax=ax)
 
     # cena a pozycja
-    def price_position_bar(self):
-        #fig, ax = plt.subplots()
-        a = self.df.loc[:, ['ValueReal', 'Position']].groupby('Position').mean()
-        a.plot.bar()
+    def price_position_bar(self, ax):
+        self.df.loc[:, ['ValueReal', 'Position']].groupby('Position').mean().plot(kind='bar', ax=ax)
 
     # cena a wiek
-    def price_age_plot(self):
-        a = self.df.loc[:, ['ValueReal', 'AgeIntervals']].groupby('AgeIntervals').mean()
-        a.plot.bar()
+    def price_age_plot(self, ax):
+        self.df.loc[:, ['ValueReal', 'AgeIntervals']].groupby('AgeIntervals').mean().plot(kind='bar', ax=ax)
 
     # kluby najbardziej wartościowe
-    def most_valued_clubs(self):
-        a = self.df.loc[:, ['ValueReal', 'Club']].groupby('Club').sum().sort_values('ValueReal').tail(10)
-        a.plot.barh()
+    def most_valued_clubs(self, ax):
+        self.df.loc[:, ['ValueReal', 'Club']].groupby('Club').sum().sort_values('ValueReal').tail(10).plot(kind='barh', ax=ax)
 
     # kluby z najlepszymy zarobkami
 
     # rozkład całego zbioru : wiek, pozycja, kraj, zarobki
-    def age_distribution(self):
-        a = self.df['AgeIntervals'].value_counts().sort_index()
-        a.plot.bar()
+    def age_distribution(self, ax):
+        self.df['AgeIntervals'].value_counts().sort_index().plot(kind='bar', ax=ax)
 
-    def position_distribution(self):
-        a = self.df['Position'].value_counts().sort_index()
-        a.plot.bar()
+    def position_distribution(self, ax):
+        self.df['Position'].value_counts().sort_index().plot(kind='bar', ax=ax)
 
     # kraje z najlepszymi piłkarzami
