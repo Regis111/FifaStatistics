@@ -10,7 +10,7 @@ from functools import partial
 
 from plotter import Plotter
 
-buttons_names = ["overall_and_price_comp", "price_bar", "price_position_bar", "price_age_plot", "position_distribution"]
+buttons_names = ["overall_and_price_comp", "price_bar", "price_position_bar", "price_age_plot", "position_distribution","most_valued_clubs"]
 number_of_plots = len(buttons_names)
 
 
@@ -60,10 +60,10 @@ class Canvas(FigureCanvas):
 
     def update_plot(self, number):
         self.figure.clear()
-        self.figure.tight_layout()
-        fig1, ax = plt.subplots()
+        axes = self.figure.add_subplot(111)
+
         if number == 0:
-            plotter_arg.overall_and_price_comp()
+            plotter_arg.overall_and_price_comp(axes)
         elif number == 1:
             plotter_arg.price_bar()
         elif number == 2:
@@ -72,17 +72,10 @@ class Canvas(FigureCanvas):
             plotter_arg.price_age_plot()
         elif number == 4:
             plotter_arg.position_distribution()
-        ax.remove()
+        elif number == 5:
+            plotter_arg.most_valued_clubs()
 
-        fig2 = self.figure
-        ax.figure = fig2
-        fig2.axes.append(ax)
-        fig2.add_axes(ax)
-
-        dummy = fig2.add_subplot(111)
-        ax.set_position(dummy.get_position())
-        dummy.remove()
-        plt.close(fig1)
+        self.figure.add_axes(axes)
         self.figure.tight_layout()
         self.draw()
 

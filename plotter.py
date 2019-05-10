@@ -30,40 +30,41 @@ class Plotter:
 
     # dwie funkcje od wykresu ceny od overalla
 
-    def overall_and_price_comp(self):
+    def overall_and_price_comp(self,ax):
         overalls = self.df.loc[:, 'Overall']
         prices = self.df.loc[:, 'ValueReal']
-        return plt.scatter(overalls, prices)
+        ax.scatter(overalls, prices)
 
     # ceny slupkowo
     def price_bar(self):
         a = self.df['ValueIntervals'].value_counts().sort_index()
-        return a.plot.bar()
+        a.plot.bar()
 
     # cena a pozycja
     def price_position_bar(self):
+        #fig, ax = plt.subplots()
         a = self.df.loc[:, ['ValueReal', 'Position']].groupby('Position').mean()
-        return a.plot.bar()
+        a.plot.bar()
 
     # cena a wiek
     def price_age_plot(self):
         a = self.df.loc[:, ['ValueReal', 'AgeIntervals']].groupby('AgeIntervals').mean()
-        return a.plot.bar()
+        a.plot.bar()
 
     # kluby najbardziej wartościowe
     def most_valued_clubs(self):
         a = self.df.loc[:, ['ValueReal', 'Club']].groupby('Club').sum().sort_values('ValueReal').tail(10)
-        return a.plot.barh()
+        a.plot.barh()
 
     # kluby z najlepszymy zarobkami
 
     # rozkład całego zbioru : wiek, pozycja, kraj, zarobki
     def age_distribution(self):
         a = self.df['AgeIntervals'].value_counts().sort_index()
-        return a.plot.bar()
+        a.plot.bar()
 
     def position_distribution(self):
         a = self.df['Position'].value_counts().sort_index()
-        return a.plot.bar()
+        a.plot.bar()
 
     # kraje z najlepszymi piłkarzami
