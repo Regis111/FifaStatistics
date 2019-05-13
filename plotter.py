@@ -28,42 +28,50 @@ class Plotter:
         df['AgeIntervals'] = pd.cut(df.Age, intervals)
 
     # dwie funkcje od wykresu ceny od overalla
-    def overall_and_price_comp(self, ax):
-        self.df.loc[:, ['Overall', 'ValueReal']]\
+    def overall_and_price_comp(self, ax, top_number):
+        df = self.df.head(top_number)
+        df.loc[:, ['Overall', 'ValueReal']]\
             .plot(kind='scatter', x='Overall', y='ValueReal', title='Overall and Price Comparison', ax=ax)
 
     # ceny slupkowo
-    def price_bar(self, ax):
-        self.df['ValueIntervals'].value_counts().sort_index().plot(kind='bar', title='Footballer Value distribution', ax=ax)
+    def price_bar(self, ax, top_number):
+        df = self.df.head(top_number)
+        df['ValueIntervals'].value_counts().sort_index().plot(kind='bar', title='Footballer Value distribution', ax=ax)
 
     # cena a pozycja
-    def price_position_bar(self, ax):
+    def price_position_bar(self, ax, top_number):
+        df = self.df.head(top_number)
         title = 'Mean Value for every position'
-        self.df.loc[:, ['ValueReal', 'Position']].groupby('Position').mean().plot(kind='bar', title=title, ax=ax)
+        df.loc[:, ['ValueReal', 'Position']].groupby('Position').mean().plot(kind='bar', title=title, ax=ax)
 
     # cena a wiek
-    def price_age_plot(self, ax):
+    def price_age_plot(self, ax, top_number):
+        df = self.df.head(top_number)
         title = 'Mean Value for every age interval'
-        self.df.loc[:, ['ValueReal', 'AgeIntervals']].groupby('AgeIntervals').mean().plot(kind='bar', ax=ax)
+        df.loc[:, ['ValueReal', 'AgeIntervals']].groupby('AgeIntervals').mean().plot(kind='bar', title=title, ax=ax)
 
     # kluby najbardziej wartościowe
-    def most_valued_clubs(self, ax):
+    def most_valued_clubs(self, ax, top_number):
+        df = self.df.head(top_number)
         title = 'Most valued clubs'
-        self.df.loc[:, ['ValueReal', 'Club']].groupby('Club').sum().sort_values('ValueReal').tail(10)\
+        df.loc[:, ['ValueReal', 'Club']].groupby('Club').sum().sort_values('ValueReal').tail(10)\
             .plot(kind='barh', title=title, ax=ax)
 
     # kluby z najlepszymy zarobkami
 
     # rozkład całego zbioru : wiek, pozycja, kraj, zarobki
-    def age_distribution(self, ax):
+    def age_distribution(self, ax, top_number):
+        df = self.df.head(top_number)
         title = 'Age distribution'
-        self.df['AgeIntervals'].value_counts().sort_index().plot(kind='bar', title=title, ax=ax)
+        df['AgeIntervals'].value_counts().sort_index().plot(kind='bar', title=title, ax=ax)
 
-    def position_distribution(self, ax):
+    def position_distribution(self, ax, top_number):
+        df = self.df.head(top_number)
         title = 'Position distribution'
-        self.df['Position'].value_counts().sort_index().plot(kind='pie', title=title, ax=ax)
+        df['Position'].value_counts().sort_index().plot(kind='pie', title=title, ax=ax)
 
-    def country_distribution(self, ax):
+    def country_distribution(self, ax, top_number):
+        df = self.df.head(top_number)
         title = 'Nationality distribution'
-        self.df['Nationality'].value_counts().sort_index().plot(kind='bar', title=title, ax=ax)
+        df['Nationality'].value_counts().sort_index().plot(kind='bar', title=title, ax=ax)
     # kraje z najlepszymi piłkarzami
