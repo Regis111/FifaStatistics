@@ -1,7 +1,6 @@
 import pandas as pd
-from PyQt5.QtWidgets import QMainWindow, QApplication, QPushButton, QLineEdit, QMessageBox
+from PyQt5.QtWidgets import QMainWindow, QPushButton, QLineEdit, QMessageBox, QWidget
 from PyQt5.QtGui import QIcon
-import sys
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
 from matplotlib.figure import Figure
 from functools import partial
@@ -13,24 +12,15 @@ number_of_plots = len(plot_functions)
 top_number = 10
 
 
-class Window(QMainWindow):
-    def __init__(self):
-        super().__init__()
-        title = "Fifa statistics"
-        top = 100
-        left = 100
-        width = 1500
-        height = 900
+class WindowPlots(QWidget):
+    def __init__(self, parent=None):
+        super(QWidget, self).__init__(parent)
+
         self.button_width = 150
+        self.button_height = 32
         self.button_distances = 50
-
-        self.setWindowTitle(title)
-        self.setGeometry(top, left, width, height)
-
         self.canvas = None
         self.textbox_enter_top_number = None
-
-        self.setWindowIcon(QIcon('icon.ico'))
 
         self.my_ui()
         self.set_functions_buttons()
@@ -44,17 +34,17 @@ class Window(QMainWindow):
         buttons = [None] * number_of_plots
         for i in range(number_of_plots):
             buttons[i] = QPushButton(plot_functions[i][0], self)
-            buttons[i].resize(self.button_width, 32)
+            buttons[i].resize(self.button_width, self.button_height)
             buttons[i].move(1210, 10 + self.button_distances * i)
             buttons[i].clicked.connect(partial(self.on_function_button_click, plot_functions[i][1]))
 
     def set_change_top_number_button(self):
         self.textbox_enter_top_number = QLineEdit(self)
-        self.textbox_enter_top_number.resize(self.button_width, 32)
+        self.textbox_enter_top_number.resize(self.button_width, self.button_height)
         self.textbox_enter_top_number.move(1210, 10 + self.button_distances * (number_of_plots + 1))
 
         button_change_top_number = QPushButton('Change top number', self)
-        button_change_top_number.resize(self.button_width, 32)
+        button_change_top_number.resize(self.button_width, self.button_height)
         button_change_top_number.move(1210, 10 + self.button_distances * (number_of_plots + 2))
         button_change_top_number.clicked.connect(self.on_change_top_number_click)
 
@@ -98,8 +88,3 @@ class Canvas(FigureCanvas):
 
 with open('data.csv', 'r', encoding='utf-8') as csvFile:
     df = pd.read_csv('data.csv')
-
-app = QApplication(sys.argv)
-window = Window()
-window.show()
-app.exec()

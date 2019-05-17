@@ -27,7 +27,7 @@ class Plotter:
         intervals = [i for i in range(15, 48, 3)]
         df['AgeIntervals'] = pd.cut(df.Age, intervals)
 
-    # dwie funkcje od wykresu ceny od overalla
+    # wykres ceny od overalla
     def overall_and_price_comp(self, ax, top_number):
         df = self.df.head(top_number)
         df.loc[:, ['Overall', 'ValueReal']]\
