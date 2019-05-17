@@ -74,4 +74,13 @@ class Plotter:
         df = self.df.head(top_number)
         title = 'Nationality distribution'
         df['Nationality'].value_counts().sort_index().plot(kind='bar', title=title, ax=ax)
-    # kraje z najlepszymi piłkarzami
+
+    # kraje z najlepszymi piłkarzami - mediana
+    def best_footballers_by_countries(self, ax, top_number):
+        df = self.df.head(top_number)
+        title = 'Mean overall by countries'
+        df.loc[:, ['Overall', 'Nationality']].groupby('Nationality').mean().sort_values('Overall')\
+            .plot(kind='barh', title=title, ax=ax)
+        for p in ax.patches:
+            ax.annotate(str(round(p.get_width(), 1)), xy=(p.get_width() * 1.005, p.get_y() * 1.005))
+

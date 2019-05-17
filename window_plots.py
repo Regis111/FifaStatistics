@@ -1,11 +1,9 @@
-import pandas as pd
-from PyQt5.QtWidgets import QMainWindow, QPushButton, QLineEdit, QMessageBox, QWidget
-from PyQt5.QtGui import QIcon
+import types
+from functools import partial
+from PyQt5.QtWidgets import QPushButton, QLineEdit, QMessageBox, QWidget
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
 from matplotlib.figure import Figure
-from functools import partial
 from plotter import Plotter
-import types
 
 plot_functions = [x for x in Plotter.__dict__.items() if isinstance(x[1], types.FunctionType) and x[0] != '__init__']
 number_of_plots = len(plot_functions)
@@ -13,9 +11,9 @@ top_number = 10
 
 
 class WindowPlots(QWidget):
-    def __init__(self, parent=None):
+    def __init__(self, plotter_arg, parent=None):
         super(QWidget, self).__init__(parent)
-
+        self.plotter_arg = plotter_arg
         self.button_width = 150
         self.button_height = 32
         self.button_distances = 50
@@ -27,7 +25,7 @@ class WindowPlots(QWidget):
         self.set_change_top_number_button()
 
     def my_ui(self):
-        self.canvas = Canvas(self, plotter=Plotter(df))
+        self.canvas = Canvas(self, plotter=self.plotter_arg)
         self.canvas.move(0, 0)
 
     def set_functions_buttons(self):
@@ -84,7 +82,3 @@ class Canvas(FigureCanvas):
         self.figure.add_axes(axes)
         self.figure.tight_layout()
         self.draw()
-
-
-with open('data.csv', 'r', encoding='utf-8') as csvFile:
-    df = pd.read_csv('data.csv')
