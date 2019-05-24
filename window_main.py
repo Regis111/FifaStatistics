@@ -14,15 +14,18 @@ class MainWindow(QMainWindow):
         super(MainWindow, self).__init__(parent)
         top = 100
         left = 100
-        width = 1500
-        height = 900
+        self.width = 1500
+        self.height = 900
         self.button_width = 150
         self.button_height = 32
         self.button_distances = 50
 
         self.plotter = None
 
-        self.setGeometry(top, left, width, height)
+        with open('data.csv', 'r', encoding='utf-8') as csvFile:
+            self.df = pd.read_csv('data.csv')
+
+        self.setGeometry(top, left, self.width, self.height)
         self.setWindowIcon(QIcon('icon.ico'))
         self.setWindowTitle("Fifa Statistics")
         self.set_toolbar()
@@ -43,9 +46,7 @@ class MainWindow(QMainWindow):
 
     def start_window_plots(self):
         if not self.plotter:
-            with open('data.csv', 'r', encoding='utf-8') as csvFile:
-                df = pd.read_csv('data.csv')
-            self.plotter = Plotter(df)
+            self.plotter = Plotter(self.df)
 
         window = WindowPlots(plotter_arg=self.plotter, parent=self)
         self.setWindowTitle("Plots")
@@ -53,7 +54,7 @@ class MainWindow(QMainWindow):
         self.show()
 
     def start_window_search(self):
-        window = WindowSearch(self)
+        window = WindowSearch(parent=self, df=self.df)
         self.setWindowTitle("Search")
         self.setCentralWidget(window)
         self.show()
