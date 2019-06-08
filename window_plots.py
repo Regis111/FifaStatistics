@@ -1,6 +1,6 @@
 import types
 from functools import partial
-from PyQt5.QtWidgets import QPushButton, QLineEdit, QMessageBox, QWidget, QComboBox
+from PyQt5.QtWidgets import QPushButton, QLineEdit, QMessageBox, QWidget, QComboBox, QLabel
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
 from matplotlib.figure import Figure
 from plotter import Plotter
@@ -10,13 +10,13 @@ plot_functions = [x for x in Plotter.__dict__.items() if isinstance(x[1], types.
 number_of_plots = len(plot_functions)
 top_number = None
 nationality = None
+label_top_number_static_text = "Currently showing: {0} lines from nationality: {1}"
 
 
 class WindowPlots(QWidget):
     def __init__(self, plotter_arg, parent=None):
         super(QWidget, self).__init__(parent)
         self.plotter_all = plotter_arg
-        self.modified_plotter = copy.copy(self.plotter_all)
         self.button_width = 150
         self.button_height = 32
         self.button_distances = 40
@@ -24,13 +24,15 @@ class WindowPlots(QWidget):
         self.textbox_enter_top_number = QLineEdit(self)
         self.combo_box_nationalities = QComboBox(self)
 
+        self.label_top_number = QLabel(self)
+
         self.my_ui()
         self.set_functions_buttons()
         self.set_change_top_number_button()
         self.set_combo_box_nationalities()
 
     def my_ui(self):
-        self.canvas = Canvas(self, plotter_all=self.plotter_all, modified_plotter=self.modified_plotter)
+        self.canvas = Canvas(self, plotter_all=self.plotter_all)
         self.canvas.move(0, 0)
 
     def set_functions_buttons(self):
@@ -51,6 +53,14 @@ class WindowPlots(QWidget):
         button_change_top_number.move(1210, 10 + self.button_distances * (number_of_plots + 2))
         button_change_top_number.clicked.connect(self.on_change_top_number_click)
 
+        self.label_top_number.move(1210, 10 + self.button_distances * (number_of_plots + 3))
+        self.label_top_number.resize(self.button_width * 2, self.button_height)
+        self.set_label_text()
+
+    def set_label_text(self):
+        show_nationality = "All" if nationality is None  else nationality
+        self.label_top_number.setText(label_top_number_static_text.format(self.canvas.get_df_size(), show_nationality))
+
     def set_combo_box_nationalities(self):
         self.combo_box_nationalities.resize(self.button_width, self.button_height)
         self.combo_box_nationalities.move(1210 + self.button_width + 10,
@@ -66,9 +76,11 @@ class WindowPlots(QWidget):
         global nationality
         nationality = nationality_arg
         self.canvas.update_plot()
+        self.set_label_text()
 
     def on_function_button_click(self, fun):
         self.canvas.update_plot(fun)
+        self.set_label_text()
 
     def on_change_top_number_click(self):
         global top_number
@@ -83,17 +95,17 @@ class WindowPlots(QWidget):
         finally:
             self.textbox_enter_top_number.setText("")
 
-        if self.canvas.fun:
-            self.canvas.update_plot(self.canvas.fun)
+        self.canvas.update_plot(self.canvas.fun)
+        self.set_label_text()
 
 
 class Canvas(FigureCanvas):
-    def __init__(self, parent=None, width=12, height=8, dpi=100, plotter_all=None, modified_plotter=None):
+    def __init__(self, parent=None, width=12, height=8, dpi=100, plotter_all=None):
         fig = Figure(figsize=(width, height), dpi=dpi)
         FigureCanvas.__init__(self, fig)
         self.setParent(parent)
         self.plotter_all = plotter_all
-        self.modified_plotter = modified_plotter
+        self.modified_plotter = copy.copy(self.plotter_all)
         self.fun = plot_functions[0][1]  # default function
         self.update_plot(self.fun)
 
@@ -111,10 +123,14 @@ class Canvas(FigureCanvas):
             self.modified_plotter = copy.copy(self.plotter_all)
 
         if top_number is not None:
-            self.modified_plotter.df = self.modified_plotter.df.head(top_number)
+            self.modified_plotter.df = copy.copy(self.modified_plotter.df.head(top_number))
 
         self.fun(self.modified_plotter, ax=axes)
 
         self.figure.add_axes(axes)
         self.figure.tight_layout()
         self.draw()
+
+    def get_df_size(self):
+        return self.modified_plotter.df.shape[0]
+
