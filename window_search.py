@@ -1,8 +1,6 @@
 import pandas as pd
 
-from PyQt5.QtWidgets import QWidget, QPushButton, QLineEdit, QTableWidget, QTableWidgetItem, QVBoxLayout, QHBoxLayout, \
-    QFileDialog, QComboBox
-from PyQt5.QtWidgets import QApplication, QTableView
+from PyQt5.QtWidgets import QWidget, QPushButton, QLineEdit, QVBoxLayout, QHBoxLayout, QComboBox, QTableView
 
 from pandas_model import PandasModel
 import copy
