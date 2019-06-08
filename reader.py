@@ -4,13 +4,17 @@ import matplotlib.pyplot as plt
 
 from plotter import Plotter
 
-'import numpy as np'
-from PIL import Image
-
 from urllib.request import urlopen, Request
 
 with open('data.csv', 'r', encoding='utf-8') as csvFile:
     df = pd.read_csv('data.csv')
+
+list = ['Name', 'Age', 'Nationality', 'Overall', 'Club', 'Value',
+                   'Wage', 'Skill Moves', 'Position', 'Height', 'Weight']
+
+for el in list:
+    print(el, type(df.loc[[0], [el]]), df.loc[[0], [el]])
+
 
 plotter = Plotter(df)
 # print plots

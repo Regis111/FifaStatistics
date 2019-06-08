@@ -43,11 +43,16 @@ class WindowSearch(QWidget):
     def search_clicked(self):
         entered_text = self.search_textbox.text()
         entered_category = self.combo_box.currentText()
-        print(self.combo_box.activated[str])
-        result = self.df[self.df[entered_category].str.match(entered_text)]
+        if entered_category in ['Name', 'Nationality', 'Club', 'Position', 'Height', 'Weight']:
+            result = self.df[self.df[entered_category].str.contains(entered_text, na=False)]
+        else:
+            result = self.df[self.df[entered_category] == float(entered_text)]
+
         self.model.update(result)
 
-    def prepare_df(self, df):
+    @staticmethod
+    def prepare_df(df):
         columns = ['Name', 'Age', 'Nationality', 'Overall', 'Club', 'Value',
                    'Wage', 'Skill Moves', 'Position', 'Height', 'Weight']
+
         return df[columns]
