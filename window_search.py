@@ -5,13 +5,14 @@ from PyQt5.QtWidgets import QWidget, QPushButton, QLineEdit, QTableWidget, QTabl
 from PyQt5.QtWidgets import QApplication, QTableView
 
 from pandas_model import PandasModel
+import copy
 
 
 class WindowSearch(QWidget):
     def __init__(self, parent, df):
         QWidget.__init__(self, parent=None)
 
-        self.df = self.prepare_df(df)
+        self.df = copy.copy(self.prepare_df(df))
 
         v_layout = QVBoxLayout()
         h_layout = QHBoxLayout()

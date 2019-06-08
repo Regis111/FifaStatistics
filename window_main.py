@@ -14,7 +14,7 @@ class MainWindow(QMainWindow):
         super(MainWindow, self).__init__(parent)
         top = 100
         left = 100
-        self.width = 1500
+        self.width = 1600
         self.height = 900
         self.button_width = 150
         self.button_height = 32

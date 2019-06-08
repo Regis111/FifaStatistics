@@ -1,5 +1,6 @@
 import pandas as pd
 from PyQt5.QtCore import QAbstractTableModel, Qt, QVariant, QModelIndex
+import copy
 
 
 class PandasModel(QAbstractTableModel):
@@ -60,6 +61,6 @@ class PandasModel(QAbstractTableModel):
 
     def update(self, df):
         self.layoutAboutToBeChanged.emit()
-        self._df = df
+        self._df = copy.copy(df)
         self._df.reset_index(inplace=True, drop=True)
         self.layoutChanged.emit()
