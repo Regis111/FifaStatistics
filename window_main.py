@@ -22,8 +22,7 @@ class MainWindow(QMainWindow):
 
         self.plotter = None
 
-        with open('data.csv', 'r', encoding='utf-8') as csvFile:
-            self.df = pd.read_csv('data.csv')
+        self.df = pd.read_csv('data.csv')
 
         self.setGeometry(top, left, self.width, self.height)
         self.setWindowIcon(QIcon('icon.ico'))
@@ -54,7 +53,7 @@ class MainWindow(QMainWindow):
         self.show()
 
     def start_window_search(self):
-        window = WindowSearch(parent=self, df=self.df)
+        window = WindowSearch(df=self.df)
         self.setWindowTitle("Search")
         self.setCentralWidget(window)
         self.show()

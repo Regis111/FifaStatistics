@@ -136,4 +136,3 @@ class Canvas(FigureCanvas):
 
     def get_df_size(self):
         return self.modified_plotter.df.shape[0]
-

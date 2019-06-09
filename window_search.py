@@ -8,7 +8,7 @@ import copy
 
 
 class WindowSearch(QWidget):
-    def __init__(self, parent, df):
+    def __init__(self, df):
         QWidget.__init__(self, parent=None)
 
         self.df = copy.copy(self.prepare_df(df))
