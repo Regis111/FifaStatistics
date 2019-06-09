@@ -46,6 +46,7 @@ class WindowSearch(QWidget):
 
         self.combo_box_position = QComboBox()
         positions = list(self.df['Position'].dropna().unique())
+        positions.append('Any')
         self.combo_box_position.addItems(positions)
         h_layout.addWidget(self.combo_box_position)
 
@@ -67,7 +68,8 @@ class WindowSearch(QWidget):
 
     def search_clicked(self):
         entered_text = self.search_textbox.text()
-        entered_position = self.combo_box_position.currentText()
+        entered_position = [self.combo_box_position.currentText()] if self.combo_box_position.currentText() != 'Any' \
+            else list(self.df['Position'].dropna().unique())
         try:
             min_age = float(self.search_min_age.text()) if self.search_min_age.text() else 10
             max_age = float(self.search_max_age.text()) if self.search_max_age.text() else 50
@@ -86,7 +88,7 @@ class WindowSearch(QWidget):
 
         result = self.df[
             (self.df['Name'].str.contains(entered_text, na=False)) &
-            (self.df['Position'] == entered_position) &
+            (self.df['Position'].isin(entered_position)) &
             (self.df['Age'] <= max_age) & (self.df['Age'] >= min_age) &
             (self.df['Skill Moves'] <= max_skill_moves) & (self.df['Skill Moves'] >= min_skill_moves) &
             (self.df['Overall'] < max_overall) & (self.df['Overall'] > min_overall)
@@ -100,4 +102,3 @@ class WindowSearch(QWidget):
                    'Wage', 'Skill Moves', 'Position', 'Height', 'Weight']
 
         return df[columns]
-

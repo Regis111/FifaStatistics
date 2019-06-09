@@ -90,8 +90,11 @@ class WindowPlots(QWidget):
             if new_number > 0:
                 top_number = new_number
         except ValueError:
-            QMessageBox.question(self, 'Error', 'Cannot parse argument: ' + entered_text, QMessageBox.Ok,
-                                 QMessageBox.Ok)
+            msg_box = QMessageBox()
+            msg_box.setIcon(QMessageBox.Information)
+            msg_box.setText('Cannot parse argument: ' + entered_text)
+            msg_box.setWindowTitle('Error')
+            msg_box.exec()
         finally:
             self.textbox_enter_top_number.setText("")
 
@@ -106,7 +109,7 @@ class Canvas(FigureCanvas):
         self.setParent(parent)
         self.plotter_all = plotter_all
         self.modified_plotter = copy.copy(self.plotter_all)
-        self.fun = plot_functions[0][1]  # default function
+        self.fun = plot_functions[0][1]
         self.update_plot(self.fun)
 
     def update_plot(self, fun=None):
