@@ -1,6 +1,7 @@
 import pandas as pd
 
-from PyQt5.QtWidgets import QWidget, QPushButton, QLineEdit, QVBoxLayout, QHBoxLayout, QComboBox, QTableView
+from PyQt5.QtWidgets import QWidget, QPushButton, QLineEdit, QVBoxLayout, QHBoxLayout, QComboBox, QTableView,\
+    QMessageBox
 
 from pandas_model import PandasModel
 import copy
@@ -66,21 +67,22 @@ class WindowSearch(QWidget):
 
     def search_clicked(self):
         entered_text = self.search_textbox.text()
-        print(entered_text)
         entered_position = self.combo_box_position.currentText()
-        print(entered_position)
-        min_age = float(self.search_min_age.text()) if self.search_min_age.text() != '' else 10
-        print(min_age)
-        max_age = float(self.search_max_age.text()) if self.search_max_age.text() != '' else 50
-        print(max_age)
-        min_overall = float(self.overall_min.text()) if self.overall_min.text() != '' else 20
-        print(min_overall)
-        max_overall = float(self.overall_max.text()) if self.overall_max.text() != '' else 100
-        print(max_overall)
-        min_skill_moves = float(self.skill_moves_min.text()) if self.skill_moves_min.text() != '' else 1.0
-        print(min_skill_moves)
-        max_skill_moves = float(self.skill_moves_max.text()) if self.skill_moves_max.text() != '' else 5.0
-        print(max_skill_moves)
+        try:
+            min_age = float(self.search_min_age.text()) if self.search_min_age.text() else 10
+            max_age = float(self.search_max_age.text()) if self.search_max_age.text() else 50
+            min_overall = float(self.overall_min.text()) if self.overall_min.text() else 20
+            max_overall = float(self.overall_max.text()) if self.overall_max.text() else 100
+            min_skill_moves = float(self.skill_moves_min.text()) if self.skill_moves_min.text() else 1.0
+            max_skill_moves = float(self.skill_moves_max.text()) if self.skill_moves_max.text() else 5.0
+
+        except ValueError:
+            msg_box = QMessageBox()
+            msg_box.setIcon(QMessageBox.Information)
+            msg_box.setText("Wrong parameters entered")
+            msg_box.setWindowTitle("Error")
+            msg_box.exec()
+            return
 
         result = self.df[
             (self.df['Name'].str.contains(entered_text, na=False)) &
