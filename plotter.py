@@ -6,7 +6,7 @@ class Plotter:
         self.df = df
         # prepare data
         intervals = [i * 10000000 for i in range(10)]
-        intervals.append(int("inf"))
+        intervals.append(float("inf"))
         df['ValueReal'] = df.apply(lambda row: Plotter.value_of_price(row.Value), axis=1)
         df['ValueIntervals'] = pd.cut(df.ValueReal, intervals, include_lowest=True)
         df['WageReal'] = df.apply(lambda row: Plotter.value_of_price(row.Wage), axis=1)
@@ -29,12 +29,25 @@ class Plotter:
 
     # wykres ceny od overalla
     def overall_and_price_comp(self, ax):
-        self.df.loc[:, ['Overall', 'ValueReal']]\
-            .plot(kind='scatter', x='Overall', y='ValueReal', title='Overall and Price Comparison', ax=ax)
+        colors = []
+        grouped = self.df.groupby(['Overall', 'ValueReal']).size()
+        number_of_occurrences_df = grouped.to_frame(name='size').reset_index()
+
+        # chyba za wolne to TODO
+        for index, row in self.df[['Overall', 'ValueReal']].iterrows():
+            a = (number_of_occurrences_df[
+                (number_of_occurrences_df['Overall'] == row['Overall']) &
+                (number_of_occurrences_df['ValueReal'] == row['ValueReal'])
+                ])
+            colors.append(a['size'].iloc[0])
+
+        self.df.loc[:, ['Overall', 'ValueReal']] \
+            .plot(kind='scatter', x='Overall', y='ValueReal', title='Overall and Price Comparison', ax=ax,
+                  c=colors,  colormap='plasma')
 
     # ceny slupkowo
     def price_bar(self, ax):
-        self.df['ValueIntervals'].value_counts().sort_index()\
+        self.df['ValueIntervals'].value_counts().sort_index() \
             .plot(kind='bar', title='Footballer Value distribution', ax=ax)
 
     # cena a pozycja
@@ -45,13 +58,13 @@ class Plotter:
     # cena a wiek
     def price_age_plot(self, ax):
         title = 'Mean Value for every age interval'
-        self.df.loc[:, ['ValueReal', 'AgeIntervals']].groupby('AgeIntervals').mean().\
+        self.df.loc[:, ['ValueReal', 'AgeIntervals']].groupby('AgeIntervals').mean(). \
             plot(kind='bar', title=title, ax=ax)
 
     # kluby najbardziej wartościowe
     def most_valued_clubs(self, ax):
         title = 'Most valued clubs'
-        self.df.loc[:, ['ValueReal', 'Club']].groupby('Club').sum().sort_values('ValueReal').tail(10)\
+        self.df.loc[:, ['ValueReal', 'Club']].groupby('Club').sum().sort_values('ValueReal').tail(10) \
             .plot(kind='barh', title=title, ax=ax)
 
     # rozkład całego zbioru : wiek, pozycja, kraj, zarobki
@@ -70,8 +83,7 @@ class Plotter:
     # kraje z najlepszymi piłkarzami - mediana
     def best_footballers_by_countries(self, ax):
         title = 'Mean overall by countries'
-        self.df.loc[:, ['Overall', 'Nationality']].groupby('Nationality').mean().sort_values('Overall')\
+        self.df.loc[:, ['Overall', 'Nationality']].groupby('Nationality').mean().sort_values('Overall') \
             .plot(kind='barh', title=title, ax=ax)
         for p in ax.patches:
             ax.annotate(str(round(p.get_width(), 1)), xy=(p.get_width() * 1.005, p.get_y() * 1.005))
-

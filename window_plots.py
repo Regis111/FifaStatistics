@@ -1,5 +1,6 @@
 import types
 from functools import partial
+
 from PyQt5.QtWidgets import QPushButton, QLineEdit, QMessageBox, QWidget, QComboBox, QLabel
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
 from matplotlib.figure import Figure
@@ -9,7 +10,7 @@ import copy
 plot_functions = [x for x in Plotter.__dict__.items() if isinstance(x[1], types.FunctionType) and x[0] != '__init__']
 number_of_plots = len(plot_functions)
 top_number = None
-nationality = None
+nationality = "All"
 label_top_number_static_text = "Currently showing: {0} lines from nationality: {1}"
 
 
@@ -17,7 +18,7 @@ class WindowPlots(QWidget):
     def __init__(self, plotter_arg, parent=None):
         super(QWidget, self).__init__(parent)
         self.plotter_all = plotter_arg
-        self.button_width = 150
+        self.button_width = 160
         self.button_height = 32
         self.button_distances = 40
         self.canvas = None
@@ -38,7 +39,7 @@ class WindowPlots(QWidget):
     def set_functions_buttons(self):
         buttons = [None] * number_of_plots
         for i in range(number_of_plots):
-            buttons[i] = QPushButton(plot_functions[i][0], self)
+            buttons[i] = QPushButton(" ".join(plot_functions[i][0].split('_')), self)
             buttons[i].resize(self.button_width, self.button_height)
             buttons[i].move(1210, 10 + self.button_distances * i)
             buttons[i].clicked.connect(partial(self.on_function_button_click, plot_functions[i][1]))
@@ -58,8 +59,7 @@ class WindowPlots(QWidget):
         self.set_label_text()
 
     def set_label_text(self):
-        show_nationality = "All" if nationality is None  else nationality
-        self.label_top_number.setText(label_top_number_static_text.format(self.canvas.get_df_size(), show_nationality))
+        self.label_top_number.setText(label_top_number_static_text.format(self.canvas.get_df_size(), nationality))
 
     def set_combo_box_nationalities(self):
         self.combo_box_nationalities.resize(self.button_width, self.button_height)
@@ -69,6 +69,7 @@ class WindowPlots(QWidget):
         nationalities_distinct = set(nationalities)
         nationalities_list = list(nationalities_distinct)
         nationalities_list.sort()
+        self.combo_box_nationalities.addItem("All")
         self.combo_box_nationalities.addItems(nationalities_list)
         self.combo_box_nationalities.activated[str].connect(self.on_combo_box_nationalities_click)
 
@@ -119,7 +120,7 @@ class Canvas(FigureCanvas):
         if fun is not None:
             self.fun = fun
 
-        if nationality is not None:
+        if nationality != "All":
             self.modified_plotter.df = copy.copy(
                 self.plotter_all.df[self.plotter_all.df['Nationality'].str.match(nationality)])
         else:
