@@ -37,10 +37,9 @@ class Plotter:
         self.df['ValueIntervals'].value_counts().sort_index().plot(kind='bar', title='Footballer Value distribution', ax=ax)
 
     # cena a pozycja
-    def price_position_bar(self, ax, top_number):
-        df = self.df.head(top_number)
+    def price_position_bar(self, ax):
         title = 'Mean Value for every position'
-        df.loc[:, ['ValueReal', 'Position']].groupby('Position').mean().plot(kind='bar', title=title, ax=ax)
+        self.df.loc[:, ['ValueReal', 'Position']].groupby('Position').mean().plot(kind='bar', title=title, ax=ax)
 
     # cena a wiek
     def price_age_plot(self, ax):
