@@ -30,20 +30,19 @@ class Plotter:
     # wykres ceny od overalla
     def overall_and_price_comp(self, ax):
         colors = []
+        colors_dict = {}
         grouped = self.df.groupby(['Overall', 'ValueReal']).size()
         number_of_occurrences_df = grouped.to_frame(name='size').reset_index()
+        for index, row in number_of_occurrences_df.iterrows():
+            colors_dict[str(row['Overall']) + "del" + (str(row['ValueReal']))] = row['size']
 
-        # chyba za wolne to TODO
         for index, row in self.df[['Overall', 'ValueReal']].iterrows():
-            a = (number_of_occurrences_df[
-                (number_of_occurrences_df['Overall'] == row['Overall']) &
-                (number_of_occurrences_df['ValueReal'] == row['ValueReal'])
-                ])
-            colors.append(a['size'].iloc[0])
+            key = str(row['Overall']) + "del" + (str(row['ValueReal']))
+            colors.append(colors_dict[key])
 
         self.df.loc[:, ['Overall', 'ValueReal']] \
             .plot(kind='scatter', x='Overall', y='ValueReal', title='Overall and Price Comparison', ax=ax,
-                  c=colors,  colormap='plasma')
+                  c=colors, colormap='plasma')
 
     # ceny slupkowo
     def price_bar(self, ax):
