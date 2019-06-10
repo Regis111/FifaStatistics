@@ -10,6 +10,7 @@ import copy
 plot_functions = [x for x in Plotter.__dict__.items() if isinstance(x[1], types.FunctionType) and x[0] != '__init__']
 number_of_plots = len(plot_functions)
 top_number = None
+max_number = None
 nationality = "All"
 label_top_number_static_text = "Currently showing: {0} lines from nationality: {1}"
 
@@ -18,6 +19,8 @@ class WindowPlots(QWidget):
     def __init__(self, plotter_arg, parent=None):
         super(QWidget, self).__init__(parent)
         self.plotter_all = plotter_arg
+        global max_number
+        max_number = plotter_arg.df.shape[0]
         self.button_width = 160
         self.button_height = 32
         self.button_distances = 40
@@ -54,12 +57,24 @@ class WindowPlots(QWidget):
         button_change_top_number.move(1210, 10 + self.button_distances * (number_of_plots + 2))
         button_change_top_number.clicked.connect(self.on_change_top_number_click)
 
-        self.label_top_number.move(1210, 10 + self.button_distances * (number_of_plots + 3))
+        button_show_all = QPushButton('Show all', self)
+        button_show_all.resize(self.button_width, self.button_height)
+        button_show_all.move(1210, 10 + self.button_distances * (number_of_plots + 3))
+        button_show_all.clicked.connect(self.set_all)
+
+        self.label_top_number.move(1210, 10 + self.button_distances * (number_of_plots + 4))
         self.label_top_number.resize(self.button_width * 2, self.button_height)
         self.set_label_text()
 
     def set_label_text(self):
         self.label_top_number.setText(label_top_number_static_text.format(self.canvas.get_df_size(), nationality))
+
+    def set_all(self):
+        if max_number:
+            global top_number
+            top_number = max_number
+            self.canvas.update_plot(self.canvas.fun)
+            self.set_label_text()
 
     def set_combo_box_nationalities(self):
         self.combo_box_nationalities.resize(self.button_width, self.button_height)
