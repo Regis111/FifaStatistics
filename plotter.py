@@ -84,17 +84,21 @@ class Plotter:
     # rozkład całego zbioru : wiek, pozycja, kraj
     def age_distribution(self, ax):
         title = 'Age distribution'
-        self.df['AgeIntervals'].value_counts().sort_index().plot(kind='pie', title=title, ax=ax)
+        self.df['AgeIntervals'].value_counts().sort_index()\
+            .plot(kind='pie', title=title, ax=ax, autopct=lambda p: '{:.0f}'.format((p/100)*self.df.shape[0]))
         ax.set_ylabel('')
 
     def position_distribution(self, ax):
         title = 'Position distribution'
-        self.df['Position'].value_counts().sort_index().plot(kind='pie', title=title, ax=ax)
+        self.df['Position'].value_counts().sort_index()\
+            .plot(kind='pie', title=title, ax=ax, autopct=lambda p: '{:.0f}'.format((p/100)*self.df.shape[0]))
         ax.set_ylabel('')
 
     def nationality_distribution(self, ax):
         title = 'Nationality distribution'
-        self.df['Nationality'].value_counts().sort_index().plot(kind='pie', title=title, ax=ax)
+        self.df['Nationality'].value_counts().sort_index()\
+            .plot(kind='pie', title=title, ax=ax,
+                  autopct=lambda p: '{:.0f}'.format((p/100)*self.df.shape[0]))
         ax.set_ylabel('')
 
     # kraje z najlepszymi piłkarzami - srednia
