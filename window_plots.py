@@ -119,7 +119,7 @@ class WindowPlots(QWidget):
 
 
 class Canvas(FigureCanvas):
-    def __init__(self, parent=None, width=12, height=8, dpi=100, plotter_all=None):
+    def __init__(self, parent=None, width=12, height=8.7, dpi=100, plotter_all=None):
         fig = Figure(figsize=(width, height), dpi=dpi)
         FigureCanvas.__init__(self, fig)
         self.setParent(parent)
