@@ -48,7 +48,7 @@ class Plotter:
     # ceny slupkowo
     def price_bar(self, ax):
         self.df['ValueIntervals'].value_counts().sort_index() \
-            .plot(kind='bar', title='Footballer Value distribution', ax=ax)
+            .plot(kind='bar', title='Footballer Value distribution', ax=ax, color='#AB6857')
         for p in ax.patches:
             ax.annotate(str(p.get_height()), xy=(p.get_x() + p.get_width()/4, p.get_height() * 1.02))
         ax.set_xlabel("Value in Euro")
@@ -57,7 +57,8 @@ class Plotter:
     # cena a pozycja
     def price_position_bar(self, ax):
         title = 'Mean Value for every position'
-        self.df.loc[:, ['ValueReal', 'Position']].groupby('Position').mean().plot(kind='bar', title=title, ax=ax)
+        self.df.loc[:, ['ValueReal', 'Position']].groupby('Position').mean() \
+            .plot(kind='bar', title=title, ax=ax, color='#FF974C')
         for p in ax.patches:
             ax.annotate(str(round(p.get_height()/1e7, 1)), xy=(p.get_x() + p.get_width()/4, p.get_height() * 1.02))
         ax.set_ylabel("Mean value in euro")
@@ -65,8 +66,8 @@ class Plotter:
     # cena a wiek
     def price_age_plot(self, ax):
         title = 'Mean Value for every age interval'
-        self.df.loc[:, ['ValueReal', 'AgeIntervals']].groupby('AgeIntervals').mean(). \
-            plot(kind='bar', title=title, ax=ax)
+        self.df.loc[:, ['ValueReal', 'AgeIntervals']].groupby('AgeIntervals').mean() \
+            .plot(kind='bar', title=title, ax=ax, color='#7293CB')
         for p in ax.patches:
             ax.annotate(str(round(p.get_height()/1e7, 1)), xy=(p.get_x() + p.get_width()/4, p.get_height() * 1.02))
         ax.set_xlabel("Age")
@@ -76,14 +77,14 @@ class Plotter:
     def most_valued_clubs(self, ax):
         title = 'Top 10 most valued clubs'
         self.df.loc[:, ['ValueReal', 'Club']].groupby('Club').sum().sort_values('ValueReal').tail(10) \
-            .plot(kind='barh', title=title, ax=ax)
+            .plot(kind='barh', title=title, ax=ax, color='#9067A7')
         ax.set_xlabel("Value in Euro")
         ax.set_ylabel("Club")
 
-    # rozkład całego zbioru : wiek, pozycja, kraj, zarobki
+    # rozkład całego zbioru : wiek, pozycja, kraj
     def age_distribution(self, ax):
         title = 'Age distribution'
-        self.df['AgeIntervals'].value_counts().sort_index().plot(kind='bar', title=title, ax=ax)
+        self.df['AgeIntervals'].value_counts().sort_index().plot(kind='bar', title=title, ax=ax, color='#CCC210')
         for p in ax.patches:
             ax.annotate(str(p.get_height()), xy=(p.get_x() + p.get_width()/4, p.get_height() * 1.02))
         ax.set_xlabel("Age")
@@ -95,7 +96,7 @@ class Plotter:
 
     def country_distribution(self, ax):
         title = 'Nationality distribution'
-        self.df['Nationality'].value_counts().sort_index().plot(kind='bar', title=title, ax=ax)
+        self.df['Nationality'].value_counts().sort_index().plot(kind='bar', title=title, ax=ax, color='#808585')
         for p in ax.patches:
             ax.annotate(str(p.get_height()), xy=(p.get_x() + p.get_width()/4, p.get_height() * 1.02))
         ax.set_xlabel("Country name")
@@ -105,7 +106,7 @@ class Plotter:
     def best_footballers_by_countries(self, ax):
         title = 'Mean overall by countries'
         self.df.loc[:, ['Overall', 'Nationality']].groupby('Nationality').mean().sort_values('Overall') \
-            .plot(kind='barh', title=title, ax=ax)
+            .plot(kind='barh', title=title, ax=ax, color='#84BA5B')
         for p in ax.patches:
             ax.annotate(str(round(p.get_width(), 1)), xy=(p.get_width() * 1.005, p.get_y() * 1.005))
         ax.set_xlabel("Overall")

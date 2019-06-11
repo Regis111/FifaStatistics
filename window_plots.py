@@ -21,7 +21,7 @@ class WindowPlots(QWidget):
         self.plotter_all = plotter_arg
         global max_number
         max_number = plotter_arg.df.shape[0]
-        self.button_width = 160
+        self.button_width = 170
         self.button_height = 32
         self.button_distances = 40
         self.canvas = None
