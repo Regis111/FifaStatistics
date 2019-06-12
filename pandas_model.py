@@ -3,6 +3,7 @@ from PyQt5.QtCore import QAbstractTableModel, Qt, QVariant, QModelIndex
 import copy
 
 
+# noinspection PyMethodOverriding,PyUnresolvedReferences
 class PandasModel(QAbstractTableModel):
     def __init__(self, df=pd.DataFrame(), parent=None):
         QAbstractTableModel.__init__(self, parent=parent)
